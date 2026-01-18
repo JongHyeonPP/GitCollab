@@ -17,6 +17,9 @@ namespace GitCollab
             if (!GitHelper.IsGitRepository()) return paths;
             if (!SettingsManager.Settings.showProjectViewOverlay) return paths; // Use as enable flag
             
+            // Refresh lock cache before checking
+            LockManager.InvalidateCache();
+            
             var allowedPaths = paths.ToList();
             
             foreach (string path in paths)
