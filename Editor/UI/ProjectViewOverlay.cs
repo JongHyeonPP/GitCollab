@@ -125,12 +125,21 @@ namespace GitCollab
 
             if (lockInfo == null) return;
 
+            // Ensure icons are loaded
+            if (_lockIconGreen == null || _lockIconRed == null || _lockIconYellow == null)
+            {
+                LoadIcons();
+            }
+
             // 아이콘 선택
             Texture2D icon = lockInfo.IsOwnedByMe ? _lockIconGreen : _lockIconRed;
             if (lockInfo.IsExpired)
             {
                 icon = _lockIconYellow;
             }
+
+            // Null check for icon
+            if (icon == null) return;
 
             // 아이콘 위치 계산 (왼쪽 상단)
             Rect iconRect = new Rect(

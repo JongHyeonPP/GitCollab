@@ -121,6 +121,10 @@ namespace GitCollab
                     var lockInfo = LockManager.GetLockInfo(scenePath);
                     if (lockInfo != null && !lockInfo.IsOwnedByMe)
                     {
+                        // Ensure icon exists
+                        if (_lockIcon == null) CreateIcon();
+                        if (_lockIcon == null) return;
+                        
                         // Show subtle indicator for objects in locked scenes
                         Rect iconRect = new Rect(selectionRect.xMax - 16, selectionRect.y, 14, 14);
                         GUI.DrawTexture(iconRect, _lockIcon);
@@ -132,6 +136,10 @@ namespace GitCollab
         private static void DrawLockIcon(Rect selectionRect, LockInfo lockInfo)
         {
             Rect iconRect = new Rect(selectionRect.xMax - 18, selectionRect.y + 1, 14, 14);
+            
+            // Ensure icon exists
+            if (_lockIcon == null) CreateIcon();
+            if (_lockIcon == null) return;
             
             Color originalColor = GUI.color;
             GUI.color = lockInfo.IsOwnedByMe ? new Color(0.2f, 0.8f, 0.4f) : new Color(0.9f, 0.3f, 0.3f);
