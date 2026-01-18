@@ -78,12 +78,12 @@ namespace GitCollab
         {
             if (!GitHelper.IsGitRepository())
             {
-                return new LockResult(false, "Git 저장소가 아닙니다.");
+                return new LockResult(false, "Not a Git repository.");
             }
 
             if (!IsLockableFile(assetPath))
             {
-                return new LockResult(false, "잠금 가능한 파일 타입이 아닙니다.");
+                return new LockResult(false, "This file type cannot be locked.");
             }
 
             // 이미 잠겨있는지 확인
@@ -92,9 +92,9 @@ namespace GitCollab
             {
                 if (existingLock.IsOwnedByMe)
                 {
-                    return new LockResult(false, "이미 내가 잠근 파일입니다.");
+                    return new LockResult(false, "Already locked by you.");
                 }
-                return new LockResult(false, $"'{existingLock.lockedBy.name}'님이 잠근 파일입니다.");
+                return new LockResult(false, $"Locked by '{existingLock.lockedBy.name}'.");
             }
 
             // 잠금 폴더 생성
@@ -117,7 +117,7 @@ namespace GitCollab
                 },
                 lockedAt = DateTime.Now.ToString("o"),
                 expiresAt = DateTime.Now.AddHours(24).ToString("o"),
-                reason = reason ?? "작업 중",
+                reason = reason ?? "Working",
                 branch = GitHelper.GetCurrentBranch(),
                 machineId = Environment.MachineName
             };
@@ -133,7 +133,7 @@ namespace GitCollab
             // Git에 추가 (선택적 자동 커밋)
             GitHelper.Add(lockFilePath);
 
-            return new LockResult(true, "잠금 완료", lockInfo);
+            return new LockResult(true, "Locked successfully.", lockInfo);
         }
 
         /// <summary>
@@ -144,12 +144,12 @@ namespace GitCollab
             var lockInfo = GetLockInfo(assetPath);
             if (lockInfo == null)
             {
-                return new LockResult(false, "잠긴 파일이 아닙니다.");
+                return new LockResult(false, "This file is not locked.");
             }
 
             if (!lockInfo.IsOwnedByMe && !force)
             {
-                return new LockResult(false, $"'{lockInfo.lockedBy.name}'님의 잠금입니다. 강제 해제가 필요합니다.");
+                return new LockResult(false, $"Locked by '{lockInfo.lockedBy.name}'. Force unlock required.");
             }
 
             // 잠금 파일 삭제
@@ -165,7 +165,7 @@ namespace GitCollab
             // 캐시에서 제거
             _lockCache.Remove(assetPath);
 
-            return new LockResult(true, "잠금 해제 완료");
+            return new LockResult(true, "Unlocked successfully.");
         }
 
         /// <summary>

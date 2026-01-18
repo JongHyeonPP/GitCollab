@@ -1,60 +1,59 @@
 # Git Collab for Unity
 
-Unity 에디터용 Git 기반 파일 잠금 및 협업 관리 도구
+A Git-based file locking and team collaboration tool for Unity Editor.
 
-## 🚀 설치 방법
+## Installation
 
-### Unity Package Manager
-
-1. `Window > Package Manager` 열기
-2. `+` 버튼 클릭 → `Add package from disk...`
-3. `GitCollab/package.json` 선택
+### Via Git URL (Recommended)
+1. Open `Window > Package Manager`
+2. Click `+` button → `Add package from git URL...`
+3. Enter: `https://github.com/JongHyeonPP/GitCollab.git`
 
 ### Manual Installation
+Copy the `GitCollab` folder to your Unity project's `Packages/` folder.
 
-`GitCollab` 폴더를 Unity 프로젝트의 `Packages/` 폴더에 복사
+## Features
 
-## 📋 주요 기능
+- **File Locking**: Lock binary files (.unity, .prefab, .asset, etc.) to prevent conflicts
+- **Git Hooks**: Automatically prevents committing files locked by others
+- **Project View Integration**: Visual lock status icons in Project window
+- **Team Dashboard**: View all locks and team members at a glance
 
-- **파일 잠금**: `.unity`, `.prefab`, `.asset` 등 바이너리 파일 잠금
-- **Git Hooks**: 자동 설치되어 잠긴 파일 커밋 방지
-- **프로젝트 뷰 통합**: 잠금 상태 아이콘 표시
-- **팀 관리**: 협업자 관리 및 권한 설정
+## Usage
 
-## 🔧 사용법
+### Lock/Unlock Files
+1. Right-click a file in Project view
+2. Select `Git Collab > Lock File`
+3. When done, select `Git Collab > Unlock File`
 
-### 파일 잠금/해제
+### Dashboard
+Open `Window > Git Collab > Dashboard` to:
+- View your locks and team locks
+- Manage settings
+- Reinstall/remove Git hooks
 
-1. 프로젝트 뷰에서 파일 우클릭
-2. `Git Collab > Lock File` 선택
-3. 작업 완료 후 `Git Collab > Unlock File`
+### Keyboard Shortcut
+- `Shift+Ctrl+R`: Refresh lock status
 
-### 대시보드
+## How It Works
 
-`Window > Git Collab > Dashboard` 에서 전체 잠금 현황 확인
-
-## 📂 폴더 구조
-
-설치 후 프로젝트 루트에 `.gitcollab/` 폴더가 생성됩니다:
+The package creates a `.gitcollab/` folder in your project root:
 
 ```
 .gitcollab/
-├── locks/          # 잠금 파일들
-├── team.json       # 팀원 정보
-└── config.json     # 설정 (추후)
+├── locks/          # Lock files (Base64 encoded paths)
+├── team.json       # Team member info
+└── config.json     # Settings
 ```
 
-이 폴더는 **Git에 커밋**되어야 팀원들과 잠금 상태가 공유됩니다.
+This folder **must be committed to Git** to share lock status with your team.
 
-## ⚙️ Git Hooks
+## Requirements
 
-패키지 설치 시 자동으로 Git Hooks가 설치됩니다:
+- Unity 2021.3 or later
+- Git installed and configured
+- Project must be a Git repository
 
-- `pre-commit`: 타인이 잠근 파일 커밋 방지
-- `pre-push`: 잠금 상태 동기화 확인
+## License
 
-수동 관리: `Window > Git Collab > Dashboard > Settings`
-
-## 📝 라이선스
-
-MIT License
+MIT License - see [LICENSE](LICENSE) file

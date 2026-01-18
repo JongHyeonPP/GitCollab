@@ -158,7 +158,7 @@ namespace GitCollab
             // 툴팁 (마우스 호버 시)
             if (selectionRect.Contains(Event.current.mousePosition))
             {
-                string owner = lockInfo.IsOwnedByMe ? "나" : lockInfo.lockedBy.name;
+                string owner = lockInfo.IsOwnedByMe ? "You" : lockInfo.lockedBy.name;
                 string tooltip = $"Locked by {owner}\n{lockInfo.reason}\n{lockInfo.TimeSinceLock}";
                 
                 // 커스텀 툴팁 표시

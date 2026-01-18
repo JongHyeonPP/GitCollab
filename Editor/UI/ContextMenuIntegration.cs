@@ -127,16 +127,16 @@ namespace GitCollab
             
             if (lockInfo == null)
             {
-                EditorUtility.DisplayDialog("Git Collab", "이 파일은 잠겨있지 않습니다.", "OK");
+                EditorUtility.DisplayDialog("Git Collab", "This file is not locked.", "OK");
                 return;
             }
 
-            string message = $"파일: {lockInfo.filePath}\n" +
-                           $"잠금자: {lockInfo.lockedBy.name}\n" +
-                           $"이메일: {lockInfo.lockedBy.email}\n" +
-                           $"시간: {lockInfo.TimeSinceLock}\n" +
-                           $"사유: {lockInfo.reason}\n" +
-                           $"브랜치: {lockInfo.branch}";
+            string message = $"File: {lockInfo.filePath}\n" +
+                           $"Locked by: {lockInfo.lockedBy.name}\n" +
+                           $"Email: {lockInfo.lockedBy.email}\n" +
+                           $"Time: {lockInfo.TimeSinceLock}\n" +
+                           $"Reason: {lockInfo.reason}\n" +
+                           $"Branch: {lockInfo.branch}";
             
             EditorUtility.DisplayDialog("Git Collab - Lock Info", message, "OK");
         }
@@ -164,11 +164,11 @@ namespace GitCollab
 
             bool confirm = EditorUtility.DisplayDialog(
                 "Git Collab - Force Unlock",
-                $"정말로 '{lockInfo.lockedBy.name}'님의 잠금을 강제 해제하시겠습니까?\n\n" +
-                $"파일: {path}\n" +
-                $"사유: {lockInfo.reason}",
-                "강제 해제",
-                "취소"
+                $"Are you sure you want to force unlock '{lockInfo.lockedBy.name}'s lock?\n\n" +
+                $"File: {path}\n" +
+                $"Reason: {lockInfo.reason}",
+                "Force Unlock",
+                "Cancel"
             );
 
             if (confirm)
@@ -228,7 +228,7 @@ namespace GitCollab
         private void OnGUI()
         {
             EditorGUILayout.Space(10);
-            EditorGUILayout.LabelField("잠금 사유를 입력하세요:", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Enter lock reason:", EditorStyles.boldLabel);
             
             reason = EditorGUILayout.TextField(reason);
             
@@ -237,14 +237,14 @@ namespace GitCollab
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             
-            if (GUILayout.Button("취소", GUILayout.Width(80)))
+            if (GUILayout.Button("Cancel", GUILayout.Width(80)))
             {
                 Close();
             }
             
-            if (GUILayout.Button("잠금", GUILayout.Width(80)))
+            if (GUILayout.Button("Lock", GUILayout.Width(80)))
             {
-                OnConfirm?.Invoke(string.IsNullOrEmpty(reason) ? "작업 중" : reason);
+                OnConfirm?.Invoke(string.IsNullOrEmpty(reason) ? "Working" : reason);
                 Close();
             }
             

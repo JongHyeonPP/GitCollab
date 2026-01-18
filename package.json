@@ -2,17 +2,24 @@
     "name": "com.gitcollab.unity",
     "version": "1.0.0",
     "displayName": "Git Collab",
-    "description": "File locking and team collaboration for Unity projects using Git",
+    "description": "Git-based file locking and team collaboration tool for Unity. Prevents merge conflicts on binary files by allowing team members to lock files they're working on.",
     "unity": "2021.3",
     "keywords": [
         "git",
         "collaboration",
         "locking",
         "team",
-        "version-control"
+        "version-control",
+        "merge-conflict"
     ],
     "author": {
-        "name": "Git Collab Team"
+        "name": "JongHyeonPP",
+        "url": "https://github.com/JongHyeonPP"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/JongHyeonPP/GitCollab.git"
+    },
+    "license": "MIT",
     "type": "tool"
 }
