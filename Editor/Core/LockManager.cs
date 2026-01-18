@@ -15,7 +15,6 @@ namespace GitCollab
         private const string CONFIG_FOLDER = ".gitcollab";
         
         private static Dictionary<string, LockInfo> _lockCache = new Dictionary<string, LockInfo>();
-        private static bool _cacheValid = false;
         
         /// <summary>
         /// 잠금 가능한 파일 확장자 목록
@@ -305,7 +304,6 @@ namespace GitCollab
         public static void InvalidateCache()
         {
             _lockCache.Clear();
-            _cacheValid = false;
         }
 
         /// <summary>
