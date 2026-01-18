@@ -364,13 +364,12 @@ namespace GitCollab
             
             if (!AssetDatabase.IsValidFolder(folderPath))
             {
-                Debug.LogWarning($"[GitCollab] Invalid folder: {folderPath}");
                 results.Add(new LockResult(false, "Not a valid folder."));
                 return results;
             }
 
             string[] guids = AssetDatabase.FindAssets("", new[] { folderPath });
-            Debug.Log($"[GitCollab] Found {guids.Length} assets in folder: {folderPath}");
+            int skipped = 0;
             
             foreach (string guid in guids)
             {
@@ -388,14 +387,14 @@ namespace GitCollab
                     }
                     else
                     {
-                        // Already locked or other reason
-                        var lockInfo = GetLockInfo(assetPath);
-                        if (lockInfo != null)
-                        {
-                            Debug.Log($"[GitCollab] Skipped (already locked): {assetPath}");
-                        }
+                        skipped++;
                     }
                 }
+            }
+            
+            if (skipped > 0)
+            {
+                Debug.Log($"[GitCollab] {skipped} file(s) skipped (already locked)");
             }
 
             return results;
