@@ -369,7 +369,6 @@ namespace GitCollab
             }
 
             string[] guids = AssetDatabase.FindAssets("", new[] { folderPath });
-            int skipped = 0;
             
             foreach (string guid in guids)
             {
@@ -387,14 +386,10 @@ namespace GitCollab
                     }
                     else
                     {
-                        skipped++;
+                        // Add as failed (already locked)
+                        results.Add(new LockResult(false, "Already locked"));
                     }
                 }
-            }
-            
-            if (skipped > 0)
-            {
-                Debug.Log($"[GitCollab] {skipped} file(s) skipped (already locked)");
             }
 
             return results;
