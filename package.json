@@ -1,0 +1,18 @@
+{
+    "name": "com.gitcollab.unity",
+    "version": "1.0.0",
+    "displayName": "Git Collab",
+    "description": "File locking and team collaboration for Unity projects using Git",
+    "unity": "2021.3",
+    "keywords": [
+        "git",
+        "collaboration",
+        "locking",
+        "team",
+        "version-control"
+    ],
+    "author": {
+        "name": "Git Collab Team"
+    },
+    "type": "tool"
+}

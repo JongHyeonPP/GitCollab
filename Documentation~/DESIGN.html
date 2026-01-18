@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Collab for Unity - 기획서</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --success: #3fb950;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1, h2, h3, h4 { color: #fff; margin: 1.5rem 0 1rem; }
+        h1 { font-size: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        h2 { font-size: 1.5rem; margin-top: 2.5rem; }
+        h3 { font-size: 1.25rem; color: var(--accent); }
+        p { margin: 0.75rem 0; }
+        code {
+            background: var(--surface);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        pre code { background: none; padding: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th { background: var(--surface); color: var(--accent); }
+        tr:hover { background: rgba(88, 166, 255, 0.05); }
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(63, 185, 80, 0.2); color: var(--success); }
+        .badge-warning { background: rgba(210, 153, 34, 0.2); color: var(--warning); }
+        .badge-danger { background: rgba(248, 81, 73, 0.2); color: var(--danger); }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .toc { background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+        .toc h3 { margin-top: 0; }
+        .toc ul { list-style: none; padding-left: 1rem; }
+        .toc a { color: var(--accent); text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        .flow-diagram {
+            background: #1a1f26;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .note {
+            background: rgba(88, 166, 255, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning {
+            background: rgba(210, 153, 34, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>🔒 Git Collab for Unity</h1>
+<p><strong>Unity 에디터용 Git 기반 파일 잠금 및 협업 관리 도구</strong></p>
+<p>작성일: 2026-01-18 | 버전: 1.0</p>
+
+<div class="toc">
+    <h3>📋 목차</h3>
+    <ul>
+        <li><a href="#overview">1. 프로젝트 개요</a></li>
+        <li><a href="#features">2. 핵심 기능</a></li>
+        <li><a href="#lock-system">3. 파일 잠금 시스템</a></li>
+        <li><a href="#git-hooks">4. Git Hooks 시스템</a></li>
+        <li><a href="#team">5. 협업자 관리</a></li>
+        <li><a href="#ui">6. Unity 에디터 UI</a></li>
+        <li><a href="#structure">7. 프로젝트 구조</a></li>
+        <li><a href="#schedule">8. 구현 일정</a></li>
+    </ul>
+</div>
+
+<h2 id="overview">1. 프로젝트 개요</h2>
+
+<h3>1.1 문제 정의</h3>
+<table>
+    <tr><th>문제</th><th>상세</th></tr>
+    <tr><td>바이너리 파일 충돌</td><td><code>.unity</code>, <code>.prefab</code>, <code>.asset</code> 파일은 머지 불가능</td></tr>
+    <tr><td>작업 중복</td><td>누가 어떤 파일 작업 중인지 모름</td></tr>
+    <tr><td>충돌 후 복구 어려움</td><td>한쪽 작업이 완전히 날아감</td></tr>
+    <tr><td>Git LFS Lock의 한계</td><td>CLI 기반, Unity 통합 없음, 유료 호스팅 필요</td></tr>
+</table>
+
+<h3>1.2 솔루션</h3>
+<div class="card">
+    <p><strong>Git Collab</strong>: Unity 에디터에 통합된 파일 잠금 시스템</p>
+    <ul>
+        <li>✅ LFS 없이 동작하는 자체 잠금 시스템</li>
+        <li>✅ Git Hooks를 통한 강제성 부여</li>
+        <li>✅ 직관적인 에디터 UI</li>
+        <li>✅ 협업자 관리 대시보드</li>
+    </ul>
+</div>
+
+<h3>1.3 타겟 사용자</h3>
+<ul>
+    <li>소규모 인디 게임 팀 (2-10명)</li>
+    <li>Git을 사용하는 Unity 개발자</li>
+    <li>Plastic SCM/Perforce를 쓰기엔 부담스러운 팀</li>
+</ul>
+
+<h2 id="features">2. 핵심 기능</h2>
+
+<table>
+    <tr><th>기능</th><th>설명</th><th>우선순위</th></tr>
+    <tr><td>파일 잠금/해제</td><td>바이너리 파일에 대한 배타적 잠금</td><td><span class="badge badge-danger">필수</span></td></tr>
+    <tr><td>Git Hooks</td><td>커밋/푸시 시 잠금 위반 방지</td><td><span class="badge badge-danger">필수</span></td></tr>
+    <tr><td>협업자 관리</td><td>팀원 목록 및 권한 관리</td><td><span class="badge badge-warning">중요</span></td></tr>
+    <tr><td>프로젝트 뷰 통합</td><td>잠금 상태 아이콘 오버레이</td><td><span class="badge badge-warning">중요</span></td></tr>
+    <tr><td>자동 동기화</td><td>주기적 원격 상태 동기화</td><td><span class="badge badge-success">선택</span></td></tr>
+    <tr><td>알림 시스템</td><td>잠금/해제 토스트 알림</td><td><span class="badge badge-success">선택</span></td></tr>
+</table>
+
+<h2 id="lock-system">3. 파일 잠금 시스템</h2>
+
+<h3>3.1 잠금 대상 파일</h3>
+<pre><code>기본 잠금 대상 (바이너리/머지 불가):
+├── .unity      (씬 파일)
+├── .prefab     (프리팹)
+├── .asset      (ScriptableObject)
+├── .controller (애니메이터)
+├── .mat        (머티리얼)
+├── .png/.jpg   (텍스처)
+├── .fbx/.obj   (3D 모델)
+└── .wav/.mp3   (오디오)
+
+제외 대상 (텍스트/머지 가능):
+├── .cs         (스크립트)
+├── .shader     (셰이더)
+└── .json/.xml  (데이터)</code></pre>
+
+<h3>3.2 Lock 파일 구조</h3>
+<p>위치: <code>&lt;ProjectRoot&gt;/.gitcollab/locks/</code></p>
+<pre><code>{
+  "version": 1,
+  "filePath": "Assets/Scenes/MainMenu.unity",
+  "fileHash": "a1b2c3d4e5f6...",
+  "lockedBy": {
+    "name": "김개발",
+    "email": "kim@example.com"
+  },
+  "lockedAt": "2026-01-18T22:00:00+09:00",
+  "expiresAt": "2026-01-19T22:00:00+09:00",
+  "reason": "메인 메뉴 UI 작업 중",
+  "branch": "feature/main-menu",
+  "machineId": "DESKTOP-ABC123"
+}</code></pre>
+
+<h3>3.3 잠금 워크플로우</h3>
+<div class="flow-diagram">
+┌─────────────────────────────────────────────────┐
+│                 잠금 요청 흐름                   │
+├─────────────────────────────────────────────────┤
+│ 1. 사용자가 파일 우클릭 → "Lock File" 선택       │
+│           ↓                                     │
+│ 2. 현재 잠금 상태 확인                           │
+│           ↓                                     │
+│    ┌──────────────┬──────────────┐              │
+│    │  잠금 없음    │   이미 잠김   │              │
+│    ↓              ↓                             │
+│ 3a. .lock 생성   3b. 경고 표시                  │
+│           ↓                                     │
+│ 4. Git에 커밋 & 푸시                             │
+│           ↓                                     │
+│ 5. 완료 알림                                     │
+└─────────────────────────────────────────────────┘</div>
+
+<h2 id="git-hooks">4. Git Hooks 시스템</h2>
+
+<h3>4.1 Hook 종류</h3>
+<table>
+    <tr><th>Hook</th><th>시점</th><th>역할</th></tr>
+    <tr><td><code>pre-commit</code></td><td>커밋 직전</td><td>잠긴 파일 수정 여부 검사</td></tr>
+    <tr><td><code>pre-push</code></td><td>푸시 직전</td><td>원격 잠금 상태와 동기화 확인</td></tr>
+    <tr><td><code>post-merge</code></td><td>머지 후</td><td>잠금 충돌 알림</td></tr>
+    <tr><td><code>post-checkout</code></td><td>브랜치 전환 후</td><td>잠금 상태 갱신</td></tr>
+</table>
+
+<h3>4.2 강제성 레벨</h3>
+<table>
+    <tr><th>레벨</th><th>방식</th><th>우회 가능?</th></tr>
+    <tr><td>1</td><td>에디터 경고</td><td>무시 가능</td></tr>
+    <tr><td>2</td><td>pre-commit hook</td><td><code>--no-verify</code>로 우회</td></tr>
+    <tr><td>3</td><td>pre-push hook</td><td><code>--no-verify</code>로 우회</td></tr>
+    <tr><td>4</td><td>서버 훅 (GitHub Actions)</td><td>❌ 우회 불가</td></tr>
+</table>
+
+<div class="note">
+    <strong>💡 참고:</strong> 우리 도구는 Unity 에디터 시작 시 Git Hooks를 자동으로 설치합니다.
+</div>
+
+<h2 id="team">5. 협업자 관리</h2>
+
+<h3>5.1 팀 데이터 구조</h3>
+<p>위치: <code>&lt;ProjectRoot&gt;/.gitcollab/team.json</code></p>
+<pre><code>{
+  "version": 1,
+  "projectName": "My Game Project",
+  "members": [
+    {
+      "id": "uuid-1234",
+      "name": "김개발",
+      "email": "kim@example.com",
+      "role": "admin",
+      "color": "#FF6B6B"
+    }
+  ],
+  "roles": {
+    "admin": { "canLock": true, "canUnlockOthers": true },
+    "member": { "canLock": true, "canUnlockOthers": false },
+    "viewer": { "canLock": false, "canUnlockOthers": false }
+  }
+}</code></pre>
+
+<h3>5.2 자동 팀원 감지</h3>
+<p>Git 커밋 히스토리에서 자동으로 팀원 목록을 추출하는 기능 제공</p>
+
+<h2 id="ui">6. Unity 에디터 UI</h2>
+
+<h3>6.1 메인 윈도우</h3>
+<div class="flow-diagram">
+┌─────────────────────────────────────────────────────┐
+│  Git Collab                            [⚙️] [🔄] [❓] │
+├─────────────────────────────────────────────────────┤
+│  📊 Overview                                        │
+│  ┌────────────────────────────────────────────────┐ │
+│  │  🔒 Locked Files: 3     👥 Team Online: 2/4    │ │
+│  │  ⚠️ Conflicts: 0        📅 Last Sync: 2 min    │ │
+│  └────────────────────────────────────────────────┘ │
+│                                                     │
+│  🔒 My Locks (2)                                    │
+│  ┌────────────────────────────────────────────────┐ │
+│  │ 📄 Assets/Scenes/MainMenu.unity                │ │
+│  │    Locked 30 min ago · "메인 메뉴 작업 중"      │ │
+│  │    [🔓 Unlock] [📝 Edit Reason]                │ │
+│  └────────────────────────────────────────────────┘ │
+│                                                     │
+│  👥 Team Locks (1)                                  │
+│  ┌────────────────────────────────────────────────┐ │
+│  │ 📄 Assets/Scenes/GamePlay.unity                │ │
+│  │    🔴 이디자인 · Locked 1 hour ago             │ │
+│  │    [💬 Request Unlock]                          │ │
+│  └────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────┘</div>
+
+<h3>6.2 프로젝트 뷰 통합</h3>
+<ul>
+    <li>🔒🟢 내가 잠금 (초록색 아이콘)</li>
+    <li>🔒🔴 타인 잠금 (빨간색 아이콘)</li>
+    <li>📄 잠금 없음 (기본 아이콘)</li>
+</ul>
+
+<h3>6.3 컨텍스트 메뉴</h3>
+<ul>
+    <li>Assets → Git Collab → Lock File</li>
+    <li>Assets → Git Collab → Unlock File</li>
+    <li>Assets → Git Collab → Request Unlock</li>
+    <li>Assets → Git Collab → View Lock History</li>
+</ul>
+
+<h2 id="structure">7. 프로젝트 구조</h2>
+
+<pre><code>GitCollab/
+├── Editor/
+│   ├── Core/
+│   │   ├── LockManager.cs       # 잠금 핵심 로직
+│   │   ├── LockInfo.cs          # 잠금 데이터 모델
+│   │   ├── TeamManager.cs       # 팀원 관리
+│   │   └── SyncManager.cs       # 동기화 로직
+│   ├── Git/
+│   │   ├── GitHelper.cs         # Git 명령 래퍼
+│   │   └── GitHookInstaller.cs  # Hook 설치
+│   ├── UI/
+│   │   ├── MainWindow.cs        # 메인 대시보드
+│   │   ├── ProjectViewOverlay.cs # 아이콘 오버레이
+│   │   └── ContextMenus.cs      # 우클릭 메뉴
+│   └── Utilities/
+│       ├── PathEncoder.cs       # 경로 인코딩
+│       └── JsonHelper.cs        # JSON 처리
+├── Resources/
+│   └── Icons/                   # 아이콘 리소스
+├── Documentation~/
+│   └── README.md
+└── package.json</code></pre>
+
+<h2 id="schedule">8. 구현 일정</h2>
+
+<table>
+    <tr><th>Phase</th><th>내용</th><th>예상 기간</th></tr>
+    <tr><td>Phase 1</td><td>코어 시스템 (LockManager, GitHelper)</td><td>2-3일</td></tr>
+    <tr><td>Phase 2</td><td>Git Hooks 시스템</td><td>1-2일</td></tr>
+    <tr><td>Phase 3</td><td>팀 관리</td><td>1-2일</td></tr>
+    <tr><td>Phase 4</td><td>UI 구현</td><td>3-4일</td></tr>
+    <tr><td>Phase 5</td><td>동기화 & 마무리</td><td>2-3일</td></tr>
+</table>
+
+<div class="card">
+    <strong>📅 총 예상 기간: 약 2주 (14일)</strong>
+</div>
+
+<hr style="margin: 3rem 0; border: none; border-top: 1px solid var(--border);">
+
+<h2>변경 이력</h2>
+<table>
+    <tr><th>날짜</th><th>버전</th><th>변경 내용</th></tr>
+    <tr><td>2026-01-18</td><td>1.0</td><td>초안 작성</td></tr>
+</table>
+
+</div>
+</body>
+</html>
