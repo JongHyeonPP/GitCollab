@@ -199,6 +199,63 @@ namespace GitCollab
         }
 
         //===========================================
+        // Lock Folder
+        //===========================================
+        
+        [MenuItem("Assets/Git Collab/Lock Folder", false, MENU_PRIORITY + 40)]
+        private static void LockFolder()
+        {
+            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            var results = LockManager.LockFolder(path);
+            
+            int success = 0, failed = 0;
+            foreach (var r in results)
+            {
+                if (r.Success) success++;
+                else failed++;
+            }
+            
+            Debug.Log($"[GitCollab] Folder lock: {success} locked, {failed} skipped");
+            AssetDatabase.Refresh();
+        }
+
+        [MenuItem("Assets/Git Collab/Lock Folder", true)]
+        private static bool LockFolderValidation()
+        {
+            if (Selection.activeObject == null) return false;
+            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            return AssetDatabase.IsValidFolder(path) && GitHelper.IsGitRepository();
+        }
+
+        //===========================================
+        // Unlock Folder
+        //===========================================
+        
+        [MenuItem("Assets/Git Collab/Unlock Folder", false, MENU_PRIORITY + 41)]
+        private static void UnlockFolder()
+        {
+            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            var results = LockManager.UnlockFolder(path);
+            
+            int success = 0;
+            foreach (var r in results)
+            {
+                if (r.Success) success++;
+            }
+            
+            Debug.Log($"[GitCollab] Folder unlock: {success} unlocked");
+            AssetDatabase.Refresh();
+        }
+
+        [MenuItem("Assets/Git Collab/Unlock Folder", true)]
+        private static bool UnlockFolderValidation()
+        {
+            if (Selection.activeObject == null) return false;
+            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            return AssetDatabase.IsValidFolder(path) && GitHelper.IsGitRepository();
+        }
+
+        //===========================================
         // Open Dashboard
         //===========================================
         

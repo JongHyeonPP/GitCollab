@@ -313,6 +313,103 @@ namespace GitCollab
         }
 
         /// <summary>
+        /// Cleanup expired locks
+        /// </summary>
+        public static int CleanupExpiredLocks()
+        {
+            int cleaned = 0;
+            string locksPath = GetLocksPath();
+            
+            if (!Directory.Exists(locksPath)) return 0;
+
+            foreach (string lockFile in Directory.GetFiles(locksPath, "*.lock"))
+            {
+                try
+                {
+                    string json = File.ReadAllText(lockFile);
+                    var lockInfo = JsonUtility.FromJson<LockInfo>(json);
+                    
+                    if (lockInfo != null && lockInfo.IsExpired)
+                    {
+                        File.Delete(lockFile);
+                        _lockCache.Remove(lockInfo.filePath);
+                        cleaned++;
+                        Debug.Log($"[GitCollab] Cleaned expired lock: {lockInfo.filePath}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[GitCollab] Failed to cleanup lock file: {ex.Message}");
+                }
+            }
+
+            if (cleaned > 0)
+            {
+                InvalidateCache();
+            }
+
+            return cleaned;
+        }
+
+        /// <summary>
+        /// Lock all lockable files in a folder
+        /// </summary>
+        public static List<LockResult> LockFolder(string folderPath, string reason = null)
+        {
+            var results = new List<LockResult>();
+            
+            if (!AssetDatabase.IsValidFolder(folderPath))
+            {
+                results.Add(new LockResult(false, "Not a valid folder."));
+                return results;
+            }
+
+            string[] guids = AssetDatabase.FindAssets("", new[] { folderPath });
+            
+            foreach (string guid in guids)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                
+                if (IsLockableFile(assetPath) && CanLock(assetPath))
+                {
+                    var result = Lock(assetPath, reason);
+                    results.Add(result);
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Unlock all my locks in a folder
+        /// </summary>
+        public static List<LockResult> UnlockFolder(string folderPath)
+        {
+            var results = new List<LockResult>();
+            
+            if (!AssetDatabase.IsValidFolder(folderPath))
+            {
+                results.Add(new LockResult(false, "Not a valid folder."));
+                return results;
+            }
+
+            string[] guids = AssetDatabase.FindAssets("", new[] { folderPath });
+            
+            foreach (string guid in guids)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                
+                if (CanUnlock(assetPath))
+                {
+                    var result = Unlock(assetPath);
+                    results.Add(result);
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// .gitcollab 폴더 초기화
         /// </summary>
         public static void EnsureInitialized()

@@ -35,6 +35,9 @@ namespace GitCollab
             
             try
             {
+                // Cleanup expired locks
+                LockManager.CleanupExpiredLocks();
+                
                 // 로컬 캐시 무효화 및 다시 읽기
                 LockManager.InvalidateCache();
                 TeamManager.InvalidateCache();

@@ -14,10 +14,17 @@ Copy the `GitCollab` folder to your Unity project's `Packages/` folder.
 
 ## Features
 
+### Core
 - **File Locking**: Lock binary files (.unity, .prefab, .asset, etc.) to prevent conflicts
-- **Git Hooks**: Automatically prevents committing files locked by others
-- **Project View Integration**: Visual lock status icons in Project window
-- **Team Dashboard**: View all locks and team members at a glance
+- **Folder Locking**: Lock all files in a folder recursively
+- **Auto Expiration**: Expired locks are automatically cleaned up
+- **Git Hooks**: Prevents committing files locked by others
+
+### UI Integration
+- **Project View**: Lock status icons on assets
+- **Hierarchy View**: Lock icons on scene objects
+- **Inspector Banner**: Lock status warning in Inspector header
+- **Dashboard**: Centralized lock management
 
 ## Usage
 
@@ -25,6 +32,10 @@ Copy the `GitCollab` folder to your Unity project's `Packages/` folder.
 1. Right-click a file in Project view
 2. Select `Git Collab > Lock File`
 3. When done, select `Git Collab > Unlock File`
+
+### Lock/Unlock Folders
+1. Right-click a folder in Project view
+2. Select `Git Collab > Lock Folder` or `Unlock Folder`
 
 ### Dashboard
 Open `Window > Git Collab > Dashboard` to:
