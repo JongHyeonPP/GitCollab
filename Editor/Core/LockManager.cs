@@ -366,20 +366,37 @@ namespace GitCollab
             
             if (!AssetDatabase.IsValidFolder(folderPath))
             {
+                Debug.LogWarning($"[GitCollab] Invalid folder: {folderPath}");
                 results.Add(new LockResult(false, "Not a valid folder."));
                 return results;
             }
 
             string[] guids = AssetDatabase.FindAssets("", new[] { folderPath });
+            Debug.Log($"[GitCollab] Found {guids.Length} assets in folder: {folderPath}");
             
             foreach (string guid in guids)
             {
                 string assetPath = AssetDatabase.GUIDToAssetPath(guid);
                 
-                if (IsLockableFile(assetPath) && CanLock(assetPath))
+                // Skip folders
+                if (AssetDatabase.IsValidFolder(assetPath)) continue;
+                
+                if (IsLockableFile(assetPath))
                 {
-                    var result = Lock(assetPath, reason);
-                    results.Add(result);
+                    if (CanLock(assetPath))
+                    {
+                        var result = Lock(assetPath, reason);
+                        results.Add(result);
+                    }
+                    else
+                    {
+                        // Already locked or other reason
+                        var lockInfo = GetLockInfo(assetPath);
+                        if (lockInfo != null)
+                        {
+                            Debug.Log($"[GitCollab] Skipped (already locked): {assetPath}");
+                        }
+                    }
                 }
             }
 
