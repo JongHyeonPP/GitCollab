@@ -18,6 +18,7 @@ Copy the `GitCollab` folder to your Unity project's `Packages/` folder.
 - **File Locking**: Lock binary files (.unity, .prefab, .asset, etc.) to prevent conflicts
 - **Folder Locking**: Lock all files in a folder recursively
 - **Auto Expiration**: Expired locks are automatically cleaned up
+- **Save Protection**: Blocks saving files locked by others
 - **Git Hooks**: Prevents committing files locked by others
 
 ### UI Integration

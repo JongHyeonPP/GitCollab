@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - **Inspector Banner**: Lock status warning shown in Inspector header
 - **Lock History**: Track all lock/unlock events for audit
 - **Theme Support**: Automatic Light/Dark theme detection
+- **Save Protection**: Blocks saving files locked by others with dialog warning
 
 ### Improved
 - Better color scheme for both editor themes
