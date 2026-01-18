@@ -133,6 +133,9 @@ namespace GitCollab
             // Git에 추가 (선택적 자동 커밋)
             GitHelper.Add(lockFilePath);
 
+            // Record history
+            LockHistory.RecordLock(assetPath, lockInfo.reason);
+
             return new LockResult(true, "Locked successfully.", lockInfo);
         }
 
@@ -164,6 +167,9 @@ namespace GitCollab
 
             // 캐시에서 제거
             _lockCache.Remove(assetPath);
+
+            // Record history
+            LockHistory.RecordUnlock(assetPath, force);
 
             return new LockResult(true, "Unlocked successfully.");
         }

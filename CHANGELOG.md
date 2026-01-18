@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-01-19
+
+### Added
+- **Folder Locking**: Lock/unlock all files in a folder recursively
+- **Auto Expiration**: Expired locks are automatically cleaned up on refresh
+- **Hierarchy Integration**: Lock icons displayed on scene objects
+- **Inspector Banner**: Lock status warning shown in Inspector header
+- **Lock History**: Track all lock/unlock events for audit
+- **Theme Support**: Automatic Light/Dark theme detection
+
+### Improved
+- Better color scheme for both editor themes
+- More comprehensive unit tests
+
+---
+
 ## [1.0.0] - 2026-01-19
 
 ### Added
