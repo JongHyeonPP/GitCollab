@@ -21,11 +21,25 @@ namespace GitCollab
         /// </summary>
         public static readonly string[] LockableExtensions = new[]
         {
+            // Scenes & Prefabs
             ".unity", ".prefab", ".asset", ".controller",
-            ".mat", ".png", ".jpg", ".jpeg", ".tga", ".psd",
-            ".fbx", ".obj", ".blend", ".max",
+            // Materials & Textures
+            ".mat", ".png", ".jpg", ".jpeg", ".tga", ".psd", ".exr", ".hdr",
+            // 3D Models
+            ".fbx", ".obj", ".blend", ".max", ".mb", ".ma",
+            // Audio
             ".wav", ".mp3", ".ogg", ".aiff",
-            ".anim", ".mask", ".overrideController"
+            // Animation
+            ".anim", ".mask", ".overrideController",
+            // Scripts & Shaders
+            ".cs", ".shader", ".cginc", ".hlsl", ".compute",
+            // UI Toolkit
+            ".uxml", ".uss", ".tss",
+            // Other
+            ".json", ".xml", ".txt", ".md",
+            ".ttf", ".otf", ".fontsettings",
+            ".playable", ".signal", ".brush", ".terrainlayer",
+            ".lighting", ".giparams", ".renderTexture"
         };
 
         /// <summary>
