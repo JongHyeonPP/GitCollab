@@ -453,30 +453,6 @@ namespace GitCollab
             
             EditorGUILayout.EndVertical();
             
-            EditorGUILayout.Space(10);
-            
-            // Git Hooks
-            EditorGUILayout.LabelField("Git Hooks", EditorStyles.boldLabel);
-            EditorGUILayout.BeginVertical(_cardStyle);
-            
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Reinstall Hooks", GUILayout.Height(28)))
-            {
-                GitHookInstaller.ReinstallHooks();
-                EditorUtility.DisplayDialog("Git Collab", "Hooks reinstalled successfully!", "OK");
-            }
-            if (GUILayout.Button("Remove Hooks", GUILayout.Height(28)))
-            {
-                if (EditorUtility.DisplayDialog("Remove Hooks", 
-                    "Remove Git hooks? This will disable commit protection.", "Remove", "Cancel"))
-                {
-                    GitHookInstaller.RemoveHooks();
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-            
-            EditorGUILayout.EndVertical();
-            
             // 저장
             if (changed)
             {
