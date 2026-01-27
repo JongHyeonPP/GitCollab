@@ -75,7 +75,14 @@ namespace GitCollab
         public static bool IsGitRepository()
         {
             var result = RunGitCommand("rev-parse --is-inside-work-tree");
-            return result.success && result.output.Trim() == "true";
+            bool isRepo = result.success && result.output.Trim() == "true";
+            
+            if (!isRepo && !result.success)
+            {
+                UnityEngine.Debug.LogWarning($"[GitCollab] Not a Git repository. Make sure this project is initialized with 'git init'. Error: {result.output}");
+            }
+            
+            return isRepo;
         }
 
         /// <summary>
